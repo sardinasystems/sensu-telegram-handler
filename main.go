@@ -2,10 +2,14 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"errors"
+	"os"
+	"os/signal"
 	"text/template"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	botapi "github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
 	corev2 "github.com/sensu/core/v2"
 	"github.com/sensu/sensu-plugin-sdk/sensu"
 )
@@ -72,8 +76,11 @@ func validateInput(_ *corev2.Event) error {
 }
 
 func executeHandler(event *corev2.Event) error {
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+
 	// initialize bot
-	bot, err := tgbotapi.NewBotAPI(config.APIToken)
+	bot, err := botapi.New(config.APIToken)
 	if err != nil {
 		return err
 	}
@@ -90,11 +97,14 @@ func executeHandler(event *corev2.Event) error {
 	}
 
 	// send message
-	message := tgbotapi.NewMessage(config.ChatID, text.String())
-	message.ParseMode = tgbotapi.ModeMarkdown
-	_, err = bot.Send(message)
+	_, err = bot.SendMessage(ctx, &botapi.SendMessageParams{
+		ChatID:    config.ChatID,
+		Text:      text.String(),
+		ParseMode: models.ParseModeMarkdown,
+	})
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

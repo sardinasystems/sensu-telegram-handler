@@ -3,7 +3,7 @@ module github.com/thor77/sensu-telegram-handler
 go 1.23.6
 
 require (
-	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+	github.com/go-telegram/bot v1.14.0
 	github.com/sensu/core/v2 v2.20.0
 	github.com/sensu/sensu-plugin-sdk v0.19.0
 )
