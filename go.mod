@@ -1,4 +1,5 @@
-module github.com/thor77/sensu-telegram-handler
+// module github.com/thor77/sensu-telegram-handler
+module github.com/sardinasystems/sensu-telegram-handler
 
 go 1.23.6
 
